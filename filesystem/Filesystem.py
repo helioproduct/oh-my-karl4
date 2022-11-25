@@ -1,3 +1,6 @@
+from typing import Set
+
+
 class StorageElement:
 
     def __init__(self, name) -> None:
@@ -37,7 +40,7 @@ class File(StorageElement):
 
 class Storage():    
 
-    def __init__(self, name, size, content):
+    def __init__(self, name, size, content : Set):
         self.name = name
         self.size = size
         self.content = content
@@ -53,3 +56,14 @@ class Storage():
 
     def get_free_size(self) -> int:
         return self.get_total_size() - self.get_size_used()
+
+
+    def delete_element(self, element : StorageElement):
+        if element in self.content:
+            self.content.remove(element)
+
+
+    def add_element(self, element : StorageElement):
+        if self.get_used_size() + element.get_size() <= self.get_free_size():
+            self.content.append(element)
+
