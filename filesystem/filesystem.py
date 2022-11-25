@@ -1,6 +1,3 @@
-from typing import List
-
-
 class StorageElement:
 
     def __init__(self, name) -> None:
