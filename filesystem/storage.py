@@ -39,6 +39,10 @@ class Directory(StorageElement):
     def get_content(self):
         return self.content
 
+    def add_element(self, element: StorageElement):
+        self.content.add(element)
+
+
 
 class File(StorageElement):
 

@@ -4,12 +4,8 @@ from typing import List
 
 class FileSystem:
 
-    def __init__(self, storages: List[Storage], mount_point: str):
+    def __init__(self, storages: List[Storage]):
         self.storages = storages
-        self.mount_point = mount_point
-
-    def get_mount_point(self) -> str:
-        return self.mount_point
 
     def ls(self, path: str):
         pass
@@ -22,3 +18,4 @@ class FileSystem:
 
     def rmdir(self, path: str):
         pass
+
