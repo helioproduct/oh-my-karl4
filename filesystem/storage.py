@@ -3,30 +3,30 @@ from abc import abstractmethod, ABC
 
 class StorageElement:
 
-    def __init__(self, name: str, size: int):
-        self.name = name
+    def __init__(self, path: str, size: int):
+        self.path = path
         self.size = size
 
     def get_size(self) -> int:
         return self.size
 
-    def get_name(self) -> str:
-        return self.name
+    def get_path(self) -> str:
+        return self.path
 
     def __eq__(self, other):
-        return self.get_name() == other.get_name()
+        return self.get_path() == other.get_path()
 
     def __hash__(self):
-        return self.get_name().__hash__()
+        return self.get_path().__hash__()
 
     def __str__(self):
-        return self.get_name() + ' ' + str(self.get_size())
+        return self.get_path() + ' ' + str(self.get_size())
 
 
 class Directory(StorageElement):
 
-    def __init__(self, name, size=0, content=None):
-        super().__init__(name, size)
+    def __init__(self, path, size=0, content=None):
+        super().__init__(path, size)
         if content is None:
             content = set()
         self.content = content
@@ -43,31 +43,16 @@ class Directory(StorageElement):
         self.content.add(element)
 
 
-
 class File(StorageElement):
 
-    def __init__(self, name, size=0):
-        super().__init__(name, size)
+    def __init__(self, path, size=0):
+        super().__init__(path, size)
 
     def get_size(self):
         return self.size
 
 
-class Storage:
-
-    def __init__(self, content=None):
-        if content is None:
-            content = set()
-        self.content = content
-
-    def add_element(self, element: StorageElement):
-        self.content.add(element)
-
-    def remove_element(self, element: StorageElement):
-        self.content.remove(element)
-
-
-class StorageManager(ABC):
+class Storage(ABC):
 
     @abstractmethod
     def index_storage(self):
