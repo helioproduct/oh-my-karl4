@@ -14,7 +14,7 @@ class StorageElement:
         return self.path
 
     def __eq__(self, other):
-        return self.get_path() == other.get_path()
+        return self.__hash__() == other.__hash__() and self.get_size() == other.get_size()
 
     def __hash__(self):
         return self.get_path().__hash__()

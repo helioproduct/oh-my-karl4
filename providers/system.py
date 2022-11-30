@@ -54,7 +54,17 @@ class LocalStorage(Storage, ABC):
     def get_used_size(self):
         return self.root_directory.get_size()
 
-    def get_real_path(self, element: StorageElement):
+    def _get_real_path(self, element: StorageElement):
         source_path = Path(self._get_source_path())
         local_path = Path(element.get_path()).relative_to(self.name)
         return source_path.joinpath(local_path)
+
+    def remove_element(self, element: StorageElement):
+        self.index_storage()
+
+        # TODO: throw exception
+        if element in self.get_content():
+            self.root_directory.content.remove(element)
+            os.remove(self._get_real_path(element))
+
+
