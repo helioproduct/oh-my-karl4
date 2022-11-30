@@ -4,39 +4,22 @@ import os
 import psutil
 
 
-def index_directory(path: str) -> Directory:
-    directory = Directory(path, 0)
-
-    path = Path(path)
-    os.chdir(path)
-    names = os.listdir()
-
-    for name in names:
-        element = None
-        absolute_path = path.joinpath(name)
-        size = os.stat(absolute_path).st_size
-
-        if os.path.isfile(str(path)):
-            element = File(str(absolute_path), size)
-
-        elif os.path.isdir(path):
-            element = index_directory(str(absolute_path))
-
-        directory.add_element(element)
-
-    return directory
-
-
 class LocalStorage(Storage, ABC):
 
-    def __init__(self, mount_point: str, source_path: str):
+    # mount_point: where Storage located
+    # source_path: where real Storage located
+    def __init__(self, mount_point: str, name: str, source_path: str):
         self.mount_point = mount_point
+        self.name = name
         self.source_path = source_path
-        self.root_directory = index_directory(source_path)
-        # self.root_directory = Directory(mount_point, 0)
+        self.root_directory = Directory(source_path + '/' + name, 0)
+        self.index_storage()
 
-    def get_source_path(self) -> str:
+    def _get_source_path(self) -> str:
         return self.source_path
+
+    def get_content(self):
+        return self.root_directory.get_content()
 
     def index_directory(self, path: str, directory: Directory):
         path = Path(path)
@@ -44,19 +27,20 @@ class LocalStorage(Storage, ABC):
         names = os.listdir()
 
         for name in names:
-            el = None
+            element = None
             absolute_path = path.joinpath(name)
             size = os.stat(absolute_path).st_size
 
+            relative_path = Path(self.name)
+            relative_path = relative_path.joinpath(absolute_path.relative_to(self.source_path))
+
             if os.path.isfile(absolute_path):
-                el = File(str(absolute_path), size)
-
+                element = File(str(relative_path), size)
             elif os.path.isdir(absolute_path):
-                el = Directory(name, 0)
-                # print(absolute_path.relative_to('/home/helio/Desktop/Storage'))
-                self.index_directory(str(absolute_path), el)
+                element = Directory(str(relative_path), 0)
+                self.index_directory(str(absolute_path), element)
 
-            directory.add_element(el)
+            directory.add_element(element)
 
     def index_storage(self):
         self.index_directory(self.source_path, self.root_directory)
@@ -70,6 +54,7 @@ class LocalStorage(Storage, ABC):
     def get_used_size(self):
         return self.root_directory.get_size()
 
-
-storage_manager = LocalStorage('/local', '/home/helio/Desktop/Storage/')
-storage_manager.index_storage()
+    def get_real_path(self, element: StorageElement):
+        source_path = Path(self._get_source_path())
+        local_path = Path(element.get_path()).relative_to(self.name)
+        return source_path.joinpath(local_path)
