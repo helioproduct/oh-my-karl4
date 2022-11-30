@@ -61,10 +61,8 @@ class LocalStorage(Storage, ABC):
 
     def remove_element(self, element: StorageElement):
         self.index_storage()
-
-        # TODO: throw exception
         if element in self.get_content():
             self.root_directory.content.remove(element)
             os.remove(self._get_real_path(element))
-
-
+        else:
+            raise ElementNotFoundException(element)

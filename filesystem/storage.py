@@ -65,3 +65,13 @@ class Storage(ABC):
     @abstractmethod
     def get_free_space_size(self):
         pass
+
+
+class ElementNotFoundException(Exception):
+
+    def __init__(self, element: StorageElement):
+
+        if element is File:
+            self.message = 'FILE ' + element.get_path() + ' not found'
+        elif element is Directory:
+            self.message = 'DIRECTORY ' + element.get_path() + ' not found'
