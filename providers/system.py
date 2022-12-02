@@ -59,6 +59,9 @@ class LocalStorage(Storage, ABC):
         local_path = Path(element.get_path()).relative_to(self.name)
         return source_path.joinpath(local_path)
 
+    def add_element(self, element: StorageElement):
+        pass
+
     def remove_element(self, element: StorageElement):
         self.index_storage()
         if element in self.get_content():
@@ -66,3 +69,5 @@ class LocalStorage(Storage, ABC):
             os.remove(self._get_real_path(element))
         else:
             raise ElementNotFoundException(element)
+
+
